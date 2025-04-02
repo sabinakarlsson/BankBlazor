@@ -1,0 +1,6 @@
+@BankBlazorApi_HostAddress = http://localhost:5037
+
+GET {{BankBlazorApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
