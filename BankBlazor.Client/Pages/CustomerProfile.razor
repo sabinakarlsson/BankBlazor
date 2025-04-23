@@ -1,5 +1,49 @@
-﻿<h3>CustomerProfile</h3>
+﻿@page "/customer"
+@inject HttpClient HttpClient
+@using Newtonsoft.Json
+@using BankBlazor.Client.ViewModels
+
+
+<h3>CustomerProfile</h3>
+
+@if (CustomerViewModel == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <section class="container">
+        <h2>Customer profile</h2>
+        <div class="info">
+            <p><strong>CustomerId:</strong> @CustomerViewModel.CustomerId</p>
+            <p><strong>Givenname:</strong> @CustomerViewModel.Givenname</p>
+            <p><strong>Surname:</strong> @CustomerViewModel.Surname</p>
+            <p><strong>AccountId:</strong> @CustomerViewModel.AccountId</p>
+            <p><strong>Balance:</strong> @CustomerViewModel.Balance</p>
+        </div>
+    </section>
+}
 
 @code {
+
+    public CustomerViewModel? CustomerViewModel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var id = 1;
+        var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7295/api/customer/{id}");
+        try
+        {
+            using (var response = await HttpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+                var body = await response.Content.ReadAsStringAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.Message.ToString();
+        }
+    }
 
 }
