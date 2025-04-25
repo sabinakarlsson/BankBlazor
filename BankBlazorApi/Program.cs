@@ -23,7 +23,7 @@ namespace BankBlazorApi
             /*Initiera NorthwindContext(dbContext) för Dependency Injection*/
             builder.Services.AddDbContext<BankBlazorContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("NorthwindContext"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("BankBlazor"));
             });
 
             builder.Services.AddScoped<ITransactionService, TransactionService>();

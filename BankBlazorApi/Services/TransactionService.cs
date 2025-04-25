@@ -33,10 +33,30 @@ namespace BankBlazorApi.Services
 
             return transaction;
         }
-        public async Task<ResponseCode> Insert(Transaction transaction)
+
+        public async Task<Account> GetAccount(int accountId)
+        {
+            var account = await _dbContext.Accounts.FindAsync(accountId);
+            if (account == null)
+            {
+                throw new Exception("Account not found");
+            }
+
+            return account;
+        }
+
+
+        public async Task<ResponseCode> Insert(decimal amount, int accountId)
         {
             try
             {
+                var transaction = new Transaction
+                {
+                    Amount = amount,
+                    AccountId = accountId,
+                    Date = DateOnly.FromDateTime(DateTime.Today)
+                };
+
                 await _dbContext.Transactions.AddAsync(transaction);
                 await _dbContext.SaveChangesAsync();
                 return ResponseCode.Success;
@@ -48,20 +68,20 @@ namespace BankBlazorApi.Services
             }
         }
 
-        public async Task<ResponseCode> Withdraw(Transaction transaction)
+        public async Task<ResponseCode> Withdraw(decimal amount, int accountId)
         {
             try
             {
-                var account = await _dbContext.Accounts.FindAsync(transaction.AccountId);
+                var account = await _dbContext.Accounts.FindAsync(accountId);
                 if (account == null)
                 {
                     return ResponseCode.NotFound;
                 }
-                if (account.Balance < transaction.Amount)
+                if (account.Balance < amount)
                 {
                     return ResponseCode.Forbidden;
                 }
-                account.Balance -= transaction.Amount;
+                account.Balance -= amount;
                 await _dbContext.SaveChangesAsync();
                 return ResponseCode.Success;
             }
@@ -73,6 +93,11 @@ namespace BankBlazorApi.Services
         }
         public async Task<ResponseCode> Transfer(int fromAccountId, int toAccountId, decimal amountToTransfer)
         {
+            fromAccountId = 1;
+            //toAccountId = 2;
+            //amountToTransfer = 100;
+
+
             try
             {
                 var fromAccount = await _dbContext.Accounts.FindAsync(fromAccountId);
@@ -96,6 +121,7 @@ namespace BankBlazorApi.Services
             catch (Exception ex)
             {
                 Console.WriteLine("Ett fel inträffade vid överföringen");
+                Console.WriteLine(ex.Message.ToString());
                 return ResponseCode.InternalServerError;
             }
         }

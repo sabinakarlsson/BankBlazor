@@ -8,11 +8,13 @@ namespace BankBlazorApi.Services.Interfaces
     {
         Task<List<Transaction>> GetAllTransactions();
 
+        Task<Account> GetAccount(int accountId);
+
         Task<Transaction> GetTransaction(int id);
 
-        Task<ResponseCode> Insert(Transaction transaction);
+        Task<ResponseCode> Insert(decimal amount, int accountId);
 
-        Task<ResponseCode> Withdraw(Transaction transaction);
+        Task<ResponseCode> Withdraw(decimal amount, int accountId);
 
         Task<ResponseCode> Transfer(int fromAccountId, int toAccountId, decimal amountToTransfer);
 

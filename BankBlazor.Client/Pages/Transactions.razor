@@ -1,10 +1,12 @@
-﻿<h3>Transactions</h3>
+﻿@inject HttpClient HttpClient
+
+<h3>Transactions</h3>
 
 <section id="transactions" class="container">
     <h2>Account Transactions</h2>
     <div class="account">
-        <p><strong>AccountId:</strong> 123456789</p>
-        <p><strong>Balance:</strong> $5,000</p>
+        <p><strong>AccountId:</strong> @AccountId</p>
+        <p><strong>Balance:</strong> @Balance</p>
     </div>
     <button>Deposit</button>
     <button>Withdraw</button>
@@ -13,5 +15,43 @@
 
 
 @code {
+    private int AccountId = 1;
+    private decimal Balance;
 
+	protected override async Task OnInitializedAsync()
+	{
+		var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7257/api/transaction/{AccountId}");
+		try
+		{
+			using (var response = await HttpClient.SendAsync(request))
+			{
+				response.EnsureSuccessStatusCode();
+				var body = await response.Content.ReadAsStringAsync();
+				Balance = decimal.Parse(body);
+			}
+		}
+		catch (Exception ex)
+		{
+			ex.Message.ToString();
+		}
+	}
+
+	private class TransactionReadDTO
+	{
+		public int AccountId { get; set; }
+		public decimal Balance { get; set; }
+	}
+
+	private void Deposit()
+	{
+		// Implement deposit logic here
+	}
+	private void Withdraw()
+	{
+		// Implement withdraw logic here
+	}
+	private void Transfer()
+	{
+		// Implement transfer logic here
+	}
 }

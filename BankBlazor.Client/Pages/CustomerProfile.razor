@@ -31,13 +31,15 @@ else
     protected override async Task OnInitializedAsync()
     {
         var id = 1;
-        var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7295/api/customer/{id}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7257/api/customer/{id}");
         try
         {
             using (var response = await HttpClient.SendAsync(request))
             {
                 response.EnsureSuccessStatusCode();
                 var body = await response.Content.ReadAsStringAsync();
+
+                CustomerViewModel = JsonConvert.DeserializeObject<CustomerViewModel>(body);
             }
         }
         catch (Exception ex)
