@@ -1,4 +1,5 @@
-﻿@inject HttpClient HttpClient
+﻿@page "/transactions"
+@inject HttpClient HttpClient
 
 <h3>Transactions</h3>
 
@@ -13,7 +14,7 @@
 	<button>Insert</button>
 
 
-    //<button>Withdraw</button>
+    <button>Withdraw</button>
 
 
     <button>Transfer</button>
@@ -56,8 +57,5 @@
 	{
 		// Implement withdraw logic here
 	}
-	private void Transfer()
-	{
-		// Implement transfer logic here
-	}
+
 }

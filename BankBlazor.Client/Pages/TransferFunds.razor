@@ -1,5 +1,55 @@
-﻿<h3>TransferFunds</h3>
+﻿@page "/transferfunds"
+@inject HttpClient HttpClient
+
+
+<h3>Transfer Funds</h3>
+
+<section id="transactions" class="container">
+	<h2>Account Details</h2>
+	<div class="account">
+		<p><strong>AccountId:</strong> @AccountId</p>
+	</div>
+
+	<h3>Transfer Funds</h3>
+	<div>
+		<label>Tranfsfer to AccoundId:</label>
+		<input @bind="ToAccountId" type="number" />
+	</div>
+	<div>
+		<label>Amount:</label>
+		<input @bind="Amount" type="number" />
+	</div>
+	<button @onclick="Transfer">Transfer</button>
+
+
+
+
+	<button>Transfer</button>
+</section>
 
 @code {
+	private int AccountId { get; set; } = 1;
+	private int ToAccountId { get; set; } = new();
+	private decimal Amount { get; set; } = new();
 
+	protected async Task Transfer()
+	{
+		try
+		{
+			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/transfer", new { AccountId, ToAccountId, Amount });
+			
+			response.EnsureSuccessStatusCode();
+
+			if (response.IsSuccessStatusCode)
+			{
+				var body = await response.Content.ReadAsStringAsync();
+				//något mer??
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+		}
+    }
 }
