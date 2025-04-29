@@ -39,11 +39,17 @@ namespace BankBlazorApi.Controllers
             {
                 return NotFound();
             }
+            var disposition = customer.Dispositions.FirstOrDefault();
+            var accountId = disposition?.AccountId;
+            var balance = disposition?.Account?.Balance;
+
             var customerDto = new CustomerReadDTO
             {
                 CustomerId = Convert.ToInt32(customer.CustomerId),
                 Givenname = customer.Givenname,
                 Surname = customer.Surname,
+                AccountId = accountId,
+                Balance = balance
             };
             return Ok(customerDto);
         }

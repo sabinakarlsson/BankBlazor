@@ -20,15 +20,10 @@
 		<input @bind="Amount" type="number" />
 	</div>
 	<button @onclick="Transfer">Transfer</button>
-
-
-
-
-	<button>Transfer</button>
 </section>
 
 @code {
-	private int AccountId { get; set; } = 1;
+	private int AccountId  = 1;
 	private int ToAccountId { get; set; } = new();
 	private decimal Amount { get; set; } = new();
 
@@ -36,7 +31,7 @@
 	{
 		try
 		{
-			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/transfer", new { AccountId, ToAccountId, Amount });
+			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/transferfunds", new { AccountId, ToAccountId, Amount });
 			
 			response.EnsureSuccessStatusCode();
 
@@ -50,6 +45,6 @@
 		{
 			Console.WriteLine($"Error: {ex.Message}");
 		}
-		}
+		
     }
 }

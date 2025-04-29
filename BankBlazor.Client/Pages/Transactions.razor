@@ -1,29 +1,45 @@
 ﻿@page "/transactions"
 @inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
 
 <h3>Transactions</h3>
 
 <section id="transactions" class="container">
-    <h2>Account Transactions</h2>
-    <div class="account">
-        <p><strong>AccountId:</strong> @AccountId</p>
-        <p><strong>Balance:</strong> @Balance</p>
-    </div>
-    
-	
-	<button>Insert</button>
+	<h2>Account Transactions</h2>
+	<div class="account">
+		<p><strong>AccountId:</strong> @AccountId</p>
+		<p><strong>Balance:</strong> @Balance</p>
+	</div>
+
+	<h3>Insert funds</h3>
+	<div>
+		<label>Amount:</label>
+		<input @bind="InsertAmount" type="number" />
+	</div>
+	<button @onclick="Insert">Insert</button>
 
 
-    <button>Withdraw</button>
+	<h3>Withdraw funds</h3>
+	<div>
+		<label>Amount:</label>
+		<input @bind="WithdrawAmount" type="number" />
+	</div>
+	<button @onclick="Withdraw">Withdraw</button>
 
 
-    <button>Transfer</button>
+	<h3>To transfer funds, click;</h3>
+	<div>
+		<button @onclick="NavigateToTransfer">Transfer</button>
+	</div>
 </section>
 
 
 @code {
-    private int AccountId = 1;
-    private decimal Balance;
+	private int AccountId = 1;
+	private decimal Balance;
+	private decimal InsertAmount;
+	private decimal WithdrawAmount;
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -43,19 +59,57 @@
 		}
 	}
 
-	private class TransactionReadDTO
+	protected async Task Insert()
 	{
-		public int AccountId { get; set; }
-		public decimal Balance { get; set; }
+		try
+		{
+			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/", new { AccountId, Amount = InsertAmount });
+
+			response.EnsureSuccessStatusCode();
+		
+			if (response.IsSuccessStatusCode)
+			{
+				var body = await response.Content.ReadAsStringAsync();
+				Balance += InsertAmount;
+				InsertAmount = 0;
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+
 	}
 
-	private void Deposit()
+	protected async Task Withdraw()
 	{
-		// Implement deposit logic here
-	}
-	private void Withdraw()
-	{
-		// Implement withdraw logic here
+		try
+		{
+			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/", new { AccountId, Amount = WithdrawAmount });
+
+			response.EnsureSuccessStatusCode();
+
+			if (response.IsSuccessStatusCode)
+			{
+				var body = await response.Content.ReadAsStringAsync();
+				Balance -= WithdrawAmount;
+				WithdrawAmount = 0;
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error: {ex.Message}");
+		}
+
 	}
 
+	private void NavigateToTransfer()
+	{
+		NavigationManager.NavigateTo("/transferfunds");
+	}
+
+
+	
+
+		
 }

@@ -24,6 +24,8 @@ namespace BankBlazorApi.Services
         public async Task<Customer> GetCustomer(int id)
         {
             var customer = await _dbContext.Customers
+                .Include(c => c.Dispositions)
+                .ThenInclude(d => d.Account)
                 .FirstOrDefaultAsync(c => c.CustomerId == id);
             if (customer == null)
             {
