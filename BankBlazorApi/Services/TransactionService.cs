@@ -63,7 +63,7 @@ namespace BankBlazorApi.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ett fel inträffade vid överföringen");
+                Console.WriteLine("Error during transaction");
                 return ResponseCode.InternalServerError;
             }
         }
@@ -87,7 +87,7 @@ namespace BankBlazorApi.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ett fel inträffade vid överföringen");
+                Console.WriteLine("Error during transaction");
                 return ResponseCode.InternalServerError;
             }
         }
@@ -104,23 +104,23 @@ namespace BankBlazorApi.Services
                 var toAccount = await _dbContext.Accounts.FindAsync(toAccountId);
                 if (fromAccount == null || toAccount == null)
                 {
-                    Console.WriteLine("Ett eller fler av kontona existerar inte.");
+                    Console.WriteLine("One or more of the accounts do not exist.");
                     return ResponseCode.NotFound;
                 }
                 if (fromAccount.Balance < amountToTransfer)
                 {
-                    Console.WriteLine("Summan du försöker föra över överstiger saldot på kontot.");
+                    Console.WriteLine("The amount you are trying to transfer exceeds the account balance.");
                     return ResponseCode.Forbidden;
                 }
                 fromAccount.Balance -= amountToTransfer;
                 toAccount.Balance += amountToTransfer;
                 await _dbContext.SaveChangesAsync();
-                Console.WriteLine("Överföringen lyckades");
+                Console.WriteLine("The transfer was successful");
                 return ResponseCode.Success;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ett fel inträffade vid överföringen");
+                Console.WriteLine("Error during transaction");
                 Console.WriteLine(ex.Message.ToString());
                 return ResponseCode.InternalServerError;
             }
