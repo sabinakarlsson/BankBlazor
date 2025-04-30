@@ -50,10 +50,20 @@ namespace BankBlazorApi.Services
         {
             try
             {
+                var account = await _dbContext.Accounts.FindAsync(accountId);
+
+                if (account == null)
+                {
+                    return ResponseCode.NotFound;
+                }
+
+                account.Balance += amount;
+
                 var transaction = new Transaction
                 {
                     Amount = amount,
                     AccountId = accountId,
+                    Operation = "Insert",
                     Date = DateOnly.FromDateTime(DateTime.Today)
                 };
 
@@ -82,6 +92,16 @@ namespace BankBlazorApi.Services
                     return ResponseCode.Forbidden;
                 }
                 account.Balance -= amount;
+
+                var transaction = new Transaction
+                {
+                    Amount = amount,
+                    AccountId = accountId,
+                    Operation = "Withdraw",
+                    Date = DateOnly.FromDateTime(DateTime.Today)
+                };
+
+                await _dbContext.Transactions.AddAsync(transaction);
                 await _dbContext.SaveChangesAsync();
                 return ResponseCode.Success;
             }
@@ -94,9 +114,6 @@ namespace BankBlazorApi.Services
         public async Task<ResponseCode> Transfer(int fromAccountId, int toAccountId, decimal amountToTransfer)
         {
             fromAccountId = 1;
-            //toAccountId = 2;
-            //amountToTransfer = 100;
-
 
             try
             {
@@ -104,7 +121,7 @@ namespace BankBlazorApi.Services
                 var toAccount = await _dbContext.Accounts.FindAsync(toAccountId);
                 if (fromAccount == null || toAccount == null)
                 {
-                    Console.WriteLine("One or more of the accounts do not exist.");
+                    Console.WriteLine("One or both of the accounts do not exist.");
                     return ResponseCode.NotFound;
                 }
                 if (fromAccount.Balance < amountToTransfer)
@@ -114,6 +131,25 @@ namespace BankBlazorApi.Services
                 }
                 fromAccount.Balance -= amountToTransfer;
                 toAccount.Balance += amountToTransfer;
+
+                var withdrawalTransaction = new Transaction
+                {
+                    AccountId = fromAccountId,
+                    Amount = amountToTransfer,
+                    Operation = "Transfer Out",
+                    Date = DateOnly.FromDateTime(DateTime.Today)
+                };
+
+                // Skapa transaktion för insättning
+                var depositTransaction = new Transaction
+                {
+                    AccountId = toAccountId,
+                    Amount = amountToTransfer,
+                    Operation = "Transfer In",
+                    Date = DateOnly.FromDateTime(DateTime.Today)
+                };
+
+                await _dbContext.Transactions.AddRangeAsync(withdrawalTransaction, depositTransaction);
                 await _dbContext.SaveChangesAsync();
                 Console.WriteLine("The transfer was successful");
                 return ResponseCode.Success;
