@@ -63,7 +63,6 @@ namespace BankBlazorApi.Services
                 {
                     Amount = amount,
                     AccountId = accountId,
-                    Operation = "Insert",
                     Date = DateOnly.FromDateTime(DateTime.Today)
                 };
 
@@ -97,7 +96,6 @@ namespace BankBlazorApi.Services
                 {
                     Amount = amount,
                     AccountId = accountId,
-                    Operation = "Withdraw",
                     Date = DateOnly.FromDateTime(DateTime.Today)
                 };
 
@@ -136,7 +134,6 @@ namespace BankBlazorApi.Services
                 {
                     AccountId = fromAccountId,
                     Amount = amountToTransfer,
-                    Operation = "Transfer Out",
                     Date = DateOnly.FromDateTime(DateTime.Today)
                 };
 
@@ -145,7 +142,6 @@ namespace BankBlazorApi.Services
                 {
                     AccountId = toAccountId,
                     Amount = amountToTransfer,
-                    Operation = "Transfer In",
                     Date = DateOnly.FromDateTime(DateTime.Today)
                 };
 
