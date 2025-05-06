@@ -1,14 +1,16 @@
 ﻿@page "/transactions"
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
+@using Newtonsoft.Json
+@using BankBlazor.Client.ViewModels
 
 <h3>Transactions</h3>
 
 <section id="transactions" class="container">
 	<h2>Account Transactions</h2>
 	<div class="account">
-		<p><strong>AccountId:</strong> @AccountId</p>
-		<p><strong>Balance:</strong> @Balance</p>
+		<p><strong>AccountId:</strong> @CustomerViewModel.AccountId</p>
+		<p><strong>Balance:</strong> @CustomerViewModel.Balance</p>
 	</div>
 
 	<h3>Insert funds</h3>
@@ -40,17 +42,21 @@
 	private decimal InsertAmount;
 	private decimal WithdrawAmount;
 
+	public CustomerViewModel? CustomerViewModel { get; set; }
+	
 
 	protected override async Task OnInitializedAsync()
 	{
-		var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7257/api/transaction/{AccountId}");
+		var id = 1;
+		var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7257/api/customer/{id}");
 		try
 		{
 			using (var response = await HttpClient.SendAsync(request))
 			{
 				response.EnsureSuccessStatusCode();
 				var body = await response.Content.ReadAsStringAsync();
-				Balance = decimal.Parse(body);
+				
+				CustomerViewModel = JsonConvert.DeserializeObject<CustomerViewModel>(body);
 			}
 		}
 		catch (Exception ex)

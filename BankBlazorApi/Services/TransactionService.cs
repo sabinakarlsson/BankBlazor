@@ -63,7 +63,10 @@ namespace BankBlazorApi.Services
                 {
                     Amount = amount,
                     AccountId = accountId,
-                    Date = DateOnly.FromDateTime(DateTime.Today)
+                    Date = DateOnly.FromDateTime(DateTime.Today),
+                    Operation = "Credit in Cash",
+                    Type = "Credit",
+                    Balance = account.Balance
                 };
 
                 await _dbContext.Transactions.AddAsync(transaction);
@@ -96,7 +99,10 @@ namespace BankBlazorApi.Services
                 {
                     Amount = amount,
                     AccountId = accountId,
-                    Date = DateOnly.FromDateTime(DateTime.Today)
+                    Date = DateOnly.FromDateTime(DateTime.Today),
+                    Operation = "Withdrawal in Cash",
+                    Type = "Debit",
+                    Balance = account.Balance
                 };
 
                 await _dbContext.Transactions.AddAsync(transaction);
@@ -134,15 +140,20 @@ namespace BankBlazorApi.Services
                 {
                     AccountId = fromAccountId,
                     Amount = amountToTransfer,
-                    Date = DateOnly.FromDateTime(DateTime.Today)
+                    Date = DateOnly.FromDateTime(DateTime.Today),
+                    Operation = "Transfer Out",
+                    Type = "Debit",
+                    Balance = fromAccount.Balance
                 };
 
-                // Skapa transaktion för insättning
                 var depositTransaction = new Transaction
                 {
                     AccountId = toAccountId,
                     Amount = amountToTransfer,
-                    Date = DateOnly.FromDateTime(DateTime.Today)
+                    Date = DateOnly.FromDateTime(DateTime.Today),
+                    Operation = "Transfer In",
+                    Type = "Credit",
+                    Balance = toAccount.Balance
                 };
 
                 await _dbContext.Transactions.AddRangeAsync(withdrawalTransaction, depositTransaction);

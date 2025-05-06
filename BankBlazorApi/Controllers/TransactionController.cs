@@ -77,6 +77,7 @@ namespace BankBlazorApi.Controllers
         {
             await _transactionService.Transfer(transferDTO.FromAccountId, transferDTO.ToAccountId, transferDTO.Amount);
             return null;
+
         }
 
 

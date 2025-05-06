@@ -31,7 +31,7 @@
 	{
 		try
 		{
-			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/transferfunds", new { AccountId, ToAccountId, Amount });
+			var response = await HttpClient.PostAsJsonAsync("https://localhost:7257/api/transaction/transfer", new { AccountId, ToAccountId, Amount });
 			
 			response.EnsureSuccessStatusCode();
 
